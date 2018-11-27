@@ -1,0 +1,52 @@
+	component kernel is
+		port (
+			clk_clk                                         : in    std_logic                     := 'X';             -- clk
+			lcd1602_demo_conduit_end_0_export_data          : inout std_logic_vector(7 downto 0)  := (others => 'X'); -- export_data
+			lcd1602_demo_conduit_end_0_export_rw            : out   std_logic;                                        -- export_rw
+			lcd1602_demo_conduit_end_0_export_en            : out   std_logic;                                        -- export_en
+			lcd1602_demo_conduit_end_0_export_rs            : out   std_logic;                                        -- export_rs
+			lcd1602_demo_conduit_end_0_export_blon          : out   std_logic;                                        -- export_blon
+			lcd1602_demo_conduit_end_0_export_on            : out   std_logic;                                        -- export_on
+			pio_external_connection_export                  : out   std_logic;                                        -- export
+			reset_reset_n                                   : in    std_logic                     := 'X';             -- reset_n
+			sdram_controller_wire_addr                      : out   std_logic_vector(12 downto 0);                    -- addr
+			sdram_controller_wire_ba                        : out   std_logic_vector(1 downto 0);                     -- ba
+			sdram_controller_wire_cas_n                     : out   std_logic;                                        -- cas_n
+			sdram_controller_wire_cke                       : out   std_logic;                                        -- cke
+			sdram_controller_wire_cs_n                      : out   std_logic;                                        -- cs_n
+			sdram_controller_wire_dq                        : inout std_logic_vector(31 downto 0) := (others => 'X'); -- dq
+			sdram_controller_wire_dqm                       : out   std_logic_vector(3 downto 0);                     -- dqm
+			sdram_controller_wire_ras_n                     : out   std_logic;                                        -- ras_n
+			sdram_controller_wire_we_n                      : out   std_logic;                                        -- we_n
+			user_gio_pwm_conduit_end_0_export               : out   std_logic;                                        -- export
+			user_ir_conduit_end_0_export_input              : in    std_logic                     := 'X';             -- export_input
+			user_ltm_adc_conduit_end_0_export_irst_n        : in    std_logic                     := 'X';             -- export_irst_n
+			user_ltm_adc_conduit_end_0_export_oadc_din      : out   std_logic;                                        -- export_oadc_din
+			user_ltm_adc_conduit_end_0_export_oadc_dclk     : out   std_logic;                                        -- export_oadc_dclk
+			user_ltm_adc_conduit_end_0_export_oadc_cs       : out   std_logic;                                        -- export_oadc_cs
+			user_ltm_adc_conduit_end_0_export_iadc_dout     : in    std_logic                     := 'X';             -- export_iadc_dout
+			user_ltm_adc_conduit_end_0_export_iadc_busy     : in    std_logic                     := 'X';             -- export_iadc_busy
+			user_ltm_adc_conduit_end_0_export_iadc_penirq_n : in    std_logic                     := 'X';             -- export_iadc_penirq_n
+			user_ltm_adc_conduit_end_0_export_otouch_irq    : out   std_logic;                                        -- export_otouch_irq
+			user_seg8_conduit_end_0_export_0                : out   std_logic_vector(6 downto 0);                     -- export_0
+			user_seg8_conduit_end_0_export_1                : out   std_logic_vector(6 downto 0);                     -- export_1
+			user_seg8_conduit_end_0_export_2                : out   std_logic_vector(6 downto 0);                     -- export_2
+			user_seg8_conduit_end_0_export_3                : out   std_logic_vector(6 downto 0);                     -- export_3
+			user_seg8_conduit_end_0_export_4                : out   std_logic_vector(6 downto 0);                     -- export_4
+			user_seg8_conduit_end_0_export_5                : out   std_logic_vector(6 downto 0);                     -- export_5
+			user_seg8_conduit_end_0_export_6                : out   std_logic_vector(6 downto 0);                     -- export_6
+			user_seg8_conduit_end_0_export_7                : out   std_logic_vector(6 downto 0);                     -- export_7
+			user_sram_bw_conduit_end_0_export_osram_addr    : out   std_logic_vector(19 downto 0);                    -- export_osram_addr
+			user_sram_bw_conduit_end_0_export_iosram_dq     : inout std_logic_vector(15 downto 0) := (others => 'X'); -- export_iosram_dq
+			user_sram_bw_conduit_end_0_export_osram_we_n    : out   std_logic;                                        -- export_osram_we_n
+			user_sram_bw_conduit_end_0_export_osram_oe_n    : out   std_logic;                                        -- export_osram_oe_n
+			user_sram_bw_conduit_end_0_export_osram_ub_n    : out   std_logic;                                        -- export_osram_ub_n
+			user_sram_bw_conduit_end_0_export_osram_lb_n    : out   std_logic;                                        -- export_osram_lb_n
+			user_sram_bw_conduit_end_0_export_osram_ce_n    : out   std_logic;                                        -- export_osram_ce_n
+			user_sram_bw_conduit_end_0_export_irst_n        : in    std_logic                     := 'X';             -- export_irst_n
+			user_sram_bw_conduit_end_0_export_osram_data    : out   std_logic_vector(31 downto 0);                    -- export_osram_data
+			user_sram_bw_conduit_end_0_export_iread_sram_en : in    std_logic                     := 'X';             -- export_iread_sram_en
+			user_sram_bw_conduit_end_0_export_iclk50m       : in    std_logic                     := 'X'              -- export_iclk50m
+		);
+	end component kernel;
+

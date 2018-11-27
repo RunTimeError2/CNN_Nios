@@ -1,0 +1,57 @@
+#include <stdio.h>
+#include "LCD1602_Qsys.h"
+#include "system.h"
+#include "CNN_recognition.h"
+
+//#include "system.h"
+unsigned int *pUser_SEG8 = USER_SEG8_BASE;
+unsigned int *pUser_LTM_ADC = USER_LTM_ADC_BASE;
+unsigned int *pUser_LTM_Buf = USER_SRAM_BW_BASE;
+char str_ans[] = "Result: 0";
+
+int main() {
+	printf("Program Starts.\n");
+
+	CNN_MNIST_recognition();
+
+	printf("Answer = %d\n", ans);
+	*(pUser_SEG8) = 0xfffffff0 + ans;
+	str_ans[8] = 48 + ans;
+	LCD_Disp(1, 0, str_ans, 9);
+
+	int ii;
+	unsigned int new_coord, x_coord, y_coord, coord_result, last_x, last_y, pixel_i, pixel_j;
+	int i, j;
+
+	for(j = 0; j < 480; j++)
+		for(i = 0; i < 800; i++)
+			*(pUser_LTM_Buf) = ((i + j*800) << 12) + 255;
+
+	for(i = 0; i < 600; i++)
+		*(pUser_LTM_Buf) = (i << 12) + 0;
+
+	last_x = (coord_result & 0x0fff0000) >> 16;
+	last_y = coord_result & 0x00000fff;
+
+	while(1) {
+		*(pUser_LTM_ADC) = 1;
+		coord_result = *(pUser_LTM_ADC);
+		x_coord = (coord_result & 0x0fff0000) >> 16;
+		y_coord = coord_result & 0x00000fff;
+		if(x_coord != last_x || y_coord != last_y) {
+			printf("position = (%d, %d)\n", x_coord, y_coord);
+			last_x = x_coord;
+			last_y = y_coord;
+			pixel_i = 800 - (y_coord * 800 / 4096);
+			pixel_j = 480 - (x_coord * 480 / 4096);
+			for(i = pixel_i - 5; i <= pixel_i + 5; i++)
+				for(j = pixel_j - 5; j <= pixel_j + 5; j++)
+					*(pUser_LTM_Buf) = ((i + j*800) << 12) + 2;
+		}
+		//for(ii = 0; ii < 3000; ii++);
+	}
+	printf("End\n");
+	return 0;
+}
+
+

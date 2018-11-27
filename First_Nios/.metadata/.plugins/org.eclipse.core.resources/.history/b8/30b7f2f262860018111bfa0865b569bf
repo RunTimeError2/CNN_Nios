@@ -1,0 +1,8 @@
+#ifndef IMAGE_BUFFER_H_
+#define IMAGE_BUFFER_H_
+
+unsigned char I_buffer[800][480][3]; // Store R, G, B data of image
+
+
+
+#endif /* IMAGE_BUFFER_H_ */

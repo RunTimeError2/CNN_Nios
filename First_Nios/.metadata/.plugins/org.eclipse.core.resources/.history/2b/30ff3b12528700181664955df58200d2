@@ -1,0 +1,21 @@
+#ifndef IMAGE_BUFFER_H_
+#define IMAGE_BUFFER_H_
+
+#define DOT_DIAMETER 5
+#define MASK_MID 2
+#define DOT_RADIUS 2
+#define SCREEN_WITDH 800
+#define SCREEN_HEIGHT 480
+
+unsigned char I_buffer[SCREEN_WITDH][SCREEN_HEIGHT];
+
+// Fill the screen with one color
+void Image_Buffer_And_Screen_Fill(unsigned char grey, unsigned int *Base_Addr);
+// Draw a pattern at a specific position
+void Image_Screen_Addmask(int x_coord, int y_coord, unsigned char mask[DOT_DIAMETER][DOT_DIAMETER]);
+// Write color information for a specific pixel
+void Write_Pixel_Color(unsigned int *Base_Addr, int x, int y, unsigned int grey);
+
+void Draw_Pixel_XYCOORD(int x, int y, unsigned char grey, unsigned int *Base_Addr);
+
+#endif /* IMAGE_BUFFER_H_ */

@@ -1,0 +1,16 @@
+Fitter Status : Successful - Fri Jul 13 20:21:13 2018
+Quartus II 64-Bit Version : 15.0.0 Build 145 04/22/2015 SJ Full Version
+Revision Name : First_Nios
+Top-level Entity Name : First_Nios
+Family : Cyclone IV E
+Device : EP4CE115F29C7
+Timing Models : Final
+Total logic elements : 7,453 / 114,480 ( 7 % )
+    Total combinational functions : 6,361 / 114,480 ( 6 % )
+    Dedicated logic registers : 4,780 / 114,480 ( 4 % )
+Total registers : 4899
+Total pins : 282 / 529 ( 53 % )
+Total virtual pins : 0
+Total memory bits : 52,352 / 3,981,312 ( 1 % )
+Embedded Multiplier 9-bit elements : 6 / 532 ( 1 % )
+Total PLLs : 1 / 4 ( 25 % )

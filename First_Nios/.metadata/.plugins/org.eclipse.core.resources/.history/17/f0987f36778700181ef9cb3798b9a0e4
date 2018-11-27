@@ -1,0 +1,214 @@
+/*
+ * CNN_recognition.h
+ *
+ *  Created on: 2018Äê7ÔÂ14ÈÕ
+ *      Author: Song Jiahao
+ */
+
+#ifndef CNN_RECOGNITION_H_
+#define CNN_RECOGNITION_H_
+
+#define IMAGE_DIM 28
+#define CONV_CORE_DIM 3
+#define CONV_RANGE 1
+#define CONV_MID 1
+#define CONV1_OUT_DIM 12
+#define CONV2_OUT_DIM 4
+#define FC1_OUT_DIM 28
+#define FC2_OUT_DIM 10
+
+#define RELU(x) (((x)>0)?(x):(0))
+
+double Input_Image[IMAGE_DIM][IMAGE_DIM];
+
+double Conv1_W[CONV_CORE_DIM][CONV_CORE_DIM][1][CONV1_OUT_DIM];
+double Conv1_B[CONV1_OUT_DIM] = {
+		0.146983608603,0.198195636272,0.321210205555,0.205878451467,0.130854144692,0.216256082058,0.168872565031,0.137987852097,0.254652470350,0.131869897246,0.181843772531,0.173898637295,
+};
+double Conv1_Image[IMAGE_DIM][IMAGE_DIM][CONV1_OUT_DIM];
+double Pool1_Image[IMAGE_DIM / 2][IMAGE_DIM / 2][CONV1_OUT_DIM];
+
+double Conv2_W[CONV_CORE_DIM][CONV_CORE_DIM][CONV1_OUT_DIM][CONV2_OUT_DIM];
+double Conv2_B[CONV2_OUT_DIM] = {
+		0.114853329957,0.080075547099,0.122944682837,0.087344735861,
+};
+double Conv2_Image[IMAGE_DIM / 2][IMAGE_DIM / 2][CONV2_OUT_DIM];
+double Pool2_Image[IMAGE_DIM / 4][IMAGE_DIM / 4][CONV2_OUT_DIM];
+
+double Flat_Image[(IMAGE_DIM / 4)*(IMAGE_DIM / 4)*CONV2_OUT_DIM];
+
+double Fc1_W[(IMAGE_DIM / 4)*(IMAGE_DIM / 4)*CONV2_OUT_DIM][FC1_OUT_DIM];
+double Fc1_B[FC1_OUT_DIM] = {
+		0.099152550101,0.095954388380,0.085950247943,0.110063590109,0.081584744155,0.132889449596,0.097715564072,0.112507961690,0.092842467129,0.089911177754,0.091856762767,0.096849605441,0.080678895116,0.098012126982,0.144408240914,0.119101680815,0.101984702051,0.121325321496,0.137987598777,0.059829950333,0.096020236611,0.037901997566,0.109031572938,0.092250034213,0.114203624427,0.106051698327,0.098489455879,0.103896073997,0.086711734533,0.077119342983,0.142477422953,0.098864540458,
+};
+double FC1_Image[FC1_OUT_DIM];
+
+double Fc2_W[FC1_OUT_DIM][FC2_OUT_DIM];
+double Fc2_B[FC2_OUT_DIM] = {
+		-0.022574726492,0.318827271461,0.028764819726,-0.004681578372,0.048250466585,0.188300862908,0.104692831635,0.011952674016,0.112382575870,0.201145663857,
+};
+double FC2_Image[FC2_OUT_DIM];
+int ans;
+
+#include "para_conv1.h"
+#include "para_conv2.h"
+#include "para_fc1.h"
+#include "para_fc2.h"
+#include "data.h"
+
+// Load all parameters and data
+void Load_All();
+// Convolution Layer 1 with relu
+void Conv1();
+// Max-pooling Layer 1
+void MaxPool1();
+// Convolution Layer 2 with relu
+void Conv2();
+// Max-pooling Layer 2
+void MaxPool2();
+// Flatten the image
+void Flatten();
+// FC Layer 1 with relu
+void Fc1();
+// FC Layer 2
+void Fc2();
+// Softmax and get the result
+void Get_Answer();
+
+int CNN_MNIST_recognition();
+
+int CNN_MNIST_recognition() {
+	LCD_Clear();
+	//Load_All();
+	Conv1();
+	MaxPool1();
+	Conv2();
+	MaxPool2();
+	Flatten();
+	Fc1();
+	Fc2();
+	Get_Answer();
+	return ans;
+}
+
+void Load_All() {
+	Format_Conv1_W();
+	Format_Conv2_W();
+	Format_Fc1_W();
+	Format_Fc2_W();
+	//Format_InputImage();
+}
+
+void Conv1() {
+	int i, j, k;
+	int i2, j2;
+	double tmp_ans;
+	for (i = 0; i < IMAGE_DIM; i++)
+		for (j = 0; j < IMAGE_DIM; j++)
+			for (k = 0; k < CONV1_OUT_DIM; k++) {
+				tmp_ans = 0.0;
+				for (i2 = -CONV_RANGE; i2 <= CONV_RANGE; i2++)
+					for (j2 = -CONV_RANGE; j2 <= CONV_RANGE; j2++)
+						if (i + i2 >= 0 && j + j2 >= 0 && i + i2 < IMAGE_DIM && j + j2 < IMAGE_DIM)
+							tmp_ans += Conv1_W[CONV_MID + i2][CONV_MID + j2][0][k] * Input_Image[i + i2][j + j2];
+				tmp_ans += Conv1_B[k];
+				tmp_ans = RELU(tmp_ans);
+				Conv1_Image[i][j][k] = tmp_ans;
+			}
+}
+
+double max(double x1, double x2, double x3, double x4) {
+	double ans = x1;
+	ans = (x2 > ans) ? x2 : ans;
+	ans = (x3 > ans) ? x3 : ans;
+	ans = (x4 > ans) ? x4 : ans;
+	return ans;
+}
+
+void MaxPool1() {
+	int i, j, k;
+	for (i = 0; i < IMAGE_DIM / 2; i++)
+		for (j = 0; j < IMAGE_DIM / 2; j++)
+			for (k = 0; k < CONV1_OUT_DIM; k++)
+				Pool1_Image[i][j][k] = max(Conv1_Image[i * 2][j * 2][k],
+					Conv1_Image[i * 2 + 1][j * 2][k],
+					Conv1_Image[i * 2][j * 2 + 1][k],
+					Conv1_Image[i * 2 + 1][j * 2 + 1][k]);
+}
+
+void Conv2() {
+	int i, j, k;
+	int i2, j2, k2;
+	double tmp_ans;
+	for (i = 0; i < IMAGE_DIM / 2; i++)
+		for (j = 0; j < IMAGE_DIM / 2; j++)
+			for (k = 0; k < CONV2_OUT_DIM; k++) {
+				tmp_ans = 0.0;
+				for (i2 = -CONV_RANGE; i2 <= CONV_RANGE; i2++)
+					for (j2 = -CONV_RANGE; j2 <= CONV_RANGE; j2++)
+						for (k2 = -CONV_RANGE; k2 < CONV1_OUT_DIM; k2++)
+							if (i + i2 >= 0 && j + j2 >= 0 && i + i2 < IMAGE_DIM / 2 && j + j2 < IMAGE_DIM / 2)
+								tmp_ans += Conv2_W[CONV_MID + i2][CONV_MID + j2][k2][k] * Pool1_Image[i + i2][j + j2][k2];
+				tmp_ans += Conv2_B[k];
+				tmp_ans = RELU(tmp_ans);
+				Conv2_Image[i][j][k] = tmp_ans;
+			}
+}
+
+void MaxPool2() {
+	int i, j, k;
+	for (i = 0; i < IMAGE_DIM / 4; i++)
+		for (j = 0; j < IMAGE_DIM / 4; j++)
+			for (k = 0; k < CONV2_OUT_DIM; k++)
+				Pool2_Image[i][j][k] = max(Conv2_Image[i * 2][j * 2][k],
+					Conv2_Image[i * 2 + 1][j * 2][k],
+					Conv2_Image[i * 2][j * 2 + 1][k],
+					Conv2_Image[i * 2 + 1][j * 2 + 1][k]);
+}
+
+void Flatten() {
+	int i, j, k;
+	for (i = 0; i < IMAGE_DIM / 4; i++)
+		for (j = 0; j < IMAGE_DIM / 4; j++)
+			for (k = 0; k < CONV2_OUT_DIM; k++)
+				Flat_Image[i*(IMAGE_DIM / 4)*CONV2_OUT_DIM + j * CONV2_OUT_DIM + k] = Pool2_Image[i][j][k];
+}
+
+void Fc1() {
+	int i, j;
+	double tmp_ans;
+	for (i = 0; i < FC1_OUT_DIM; i++) {
+		tmp_ans = 0.0;
+		for (j = 0; j < (IMAGE_DIM / 4)*(IMAGE_DIM / 4)*CONV2_OUT_DIM; j++)
+			tmp_ans += Flat_Image[j] * Fc1_W[j][i];
+		tmp_ans += Fc1_B[i];
+		tmp_ans = RELU(tmp_ans);
+		FC1_Image[i] = tmp_ans;
+	}
+}
+
+void Fc2() {
+	int i, j;
+	double tmp_ans;
+	for (i = 0; i < FC2_OUT_DIM; i++) {
+		tmp_ans = 0.0;
+		for (j = 0; j < FC1_OUT_DIM; j++)
+			tmp_ans += FC1_Image[j] * Fc2_W[j][i];
+		tmp_ans += Fc2_B[i];
+		FC2_Image[i] = tmp_ans;
+	}
+}
+
+void Get_Answer() {
+	double max = FC2_Image[0];
+	int max_point = 0;
+	int i;
+	for (i = 1; i < FC2_OUT_DIM; i++)
+		if (FC2_Image[i] > max) {
+			max = FC2_Image[i];
+			max_point = i;
+		}
+	ans = max_point;
+}
+
+#endif /* CNN_RECOGNITION_H_ */

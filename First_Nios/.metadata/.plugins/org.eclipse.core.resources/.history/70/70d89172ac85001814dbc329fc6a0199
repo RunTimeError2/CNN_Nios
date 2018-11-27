@@ -1,0 +1,11 @@
+#include <stdio.h>
+#include "system.h"
+
+unsigned int *pUser_SEG8 = USER_SEG8_BASE;
+
+int main()
+{
+  printf("Hello from Nios II!\n");
+  *(pUser_SEG8) = 0x66666666;
+  return 0;
+}

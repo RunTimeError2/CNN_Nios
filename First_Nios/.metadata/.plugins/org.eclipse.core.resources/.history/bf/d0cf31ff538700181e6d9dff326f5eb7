@@ -1,0 +1,22 @@
+/*
+ * CNN_recognition.c
+ *
+ *  Created on: 2018Äê7ÔÂ14ÈÕ
+ *      Author: Song Jiahao
+ */
+
+#include "CNN_recognition.h"
+
+int CNN_MNIST_recognition() {
+	LCD_Clear();
+		Load_All();
+		Conv1();
+		MaxPool1();
+		Conv2();
+		MaxPool2();
+		Flatten();
+		Fc1();
+		Fc2();
+		Get_Answer();
+	return ans;
+}

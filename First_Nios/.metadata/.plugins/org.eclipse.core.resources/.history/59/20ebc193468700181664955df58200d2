@@ -1,0 +1,243 @@
+#include <stdio.h>
+#include "LCD1602_Qsys.h"
+
+#define IMAGE_DIM 28
+#define CONV_CORE_DIM 3
+#define CONV_RANGE 1
+#define CONV_MID 1
+#define CONV1_OUT_DIM 8
+#define CONV2_OUT_DIM 4
+#define FC1_OUT_DIM 32
+#define FC2_OUT_DIM 10
+
+#define RELU(x) (((x)>0)?(x):(0))
+
+double Input_Image[IMAGE_DIM][IMAGE_DIM];
+
+double Conv1_W[CONV_CORE_DIM][CONV_CORE_DIM][1][CONV1_OUT_DIM];
+double Conv1_B[CONV1_OUT_DIM] = {
+	0.037722453475, 0.002797347261, 0.305463284254, 0.201481848955, 0.119835518301, 0.125280037522, 0.108334325254, 0.034626591951,
+};
+double Conv1_Image[IMAGE_DIM][IMAGE_DIM][CONV1_OUT_DIM];
+double Pool1_Image[IMAGE_DIM / 2][IMAGE_DIM / 2][CONV1_OUT_DIM];
+
+double Conv2_W[CONV_CORE_DIM][CONV_CORE_DIM][CONV1_OUT_DIM][CONV2_OUT_DIM];
+double Conv2_B[CONV2_OUT_DIM] = {
+	0.099538996816, 0.045513521880, 0.186764270067, 0.073189675808
+};
+double Conv2_Image[IMAGE_DIM / 2][IMAGE_DIM / 2][CONV2_OUT_DIM];
+double Pool2_Image[IMAGE_DIM / 4][IMAGE_DIM / 4][CONV2_OUT_DIM];
+
+double Flat_Image[(IMAGE_DIM / 4)*(IMAGE_DIM / 4)*CONV2_OUT_DIM];
+
+double Fc1_W[(IMAGE_DIM / 4)*(IMAGE_DIM / 4)*CONV2_OUT_DIM][FC1_OUT_DIM];
+double Fc1_B[FC1_OUT_DIM] = {
+	0.085268668830, 0.104823432863, 0.094293154776, 0.116845712066, 0.092972017825, 0.093681968749, 0.069857798517, 0.101836457849, 0.075211443007, 0.109067849815, 0.112637236714, 0.094236835837, 0.128623679280, 0.058109421283, 0.103581912816, 0.096784077585, 0.093983590603, 0.126963421702, 0.100000001490, 0.187534689903, 0.076948776841, 0.161091834307, 0.110916681588, 0.131336808205, 0.117547012866, 0.072507366538, 0.048740513623, 0.067004226148, 0.079193867743, 0.147164106369, 0.094332851470, 0.131599575281
+};
+double FC1_Image[FC1_OUT_DIM];
+
+double Fc2_W[FC1_OUT_DIM][FC2_OUT_DIM];
+double Fc2_B[FC2_OUT_DIM] = {
+	-0.036088421941, 0.312147021294, -0.109268501401, -0.145344331861, 0.349955409765, 0.041141033173, 0.159300595522, -0.013305801898, 0.197449177504, 0.236681833863
+};
+double FC2_Image[FC2_OUT_DIM];
+int ans;
+
+#include "para_conv1.h"
+#include "para_conv2.h"
+#include "para_fc1.h"
+#include "para_fc2.h"
+#include "data.h"
+#include "system.h"
+#include "Image_Buffer.h"
+
+// Load all parameters and data
+void Load_All();
+// Convolution Layer 1 with relu
+void Conv1();
+// Max-pooling Layer 1
+void MaxPool1();
+// Convolution Layer 2 with relu
+void Conv2();
+// Max-pooling Layer 2
+void MaxPool2();
+// Flatten the image
+void Flatten();
+// FC Layer 1 with relu
+void Fc1();
+// FC Layer 2
+void Fc2();
+// Softmax and get the result
+void Get_Answer();
+
+//#include "system.h"
+unsigned int *pUser_SEG8 = USER_SEG8_BASE;
+unsigned int *pUser_LTM_ADC = USER_LTM_ADC_BASE;
+unsigned int *pUser_LTM_Buf = USER_SRAM_BW_BASE;
+char str_ans[] = "Result: 0";
+
+int main() {
+	printf("Program Starts.\n");
+	/*LCD_Clear();
+	Load_All();
+	Conv1();
+	MaxPool1();
+	Conv2();
+	MaxPool2();
+	Flatten();
+	Fc1();
+	Fc2();
+	Get_Answer();
+
+	printf("Answer = %d\n", ans);
+	*(pUser_SEG8) = 0xfffffff0 + ans;
+	str_ans[8] = 48 + ans;
+	LCD_Disp(1, 0, str_ans, 9);*/
+	int ii;
+	unsigned int new_coord, x_coord, y_coord, coord_result, last_x, last_y, pixel_x, pixel_y;
+	int i, j;
+
+	for(j = 0; j < 480; j++)
+		for(i = 0; i < 800; i++)
+			*(pUser_LTM_Buf) = ((i + j*800) << 12) + 255;
+
+	while(1) {
+		*(pUser_LTM_ADC) = 1;
+		coord_result = *(pUser_LTM_ADC);
+		x_coord = (coord_result & 0x0fff0000) >> 16;
+		y_coord = coord_result & 0x00000fff;
+		if(x_coord != last_x || y_coord != last_y) {
+			printf("position = (%d, %d)\n", x_coord, y_coord);
+			last_x = x_coord;
+			last_y = y_coord;
+			pixel_x = x_coord * 800 / 4096;
+			pixel_y = y_coord * 480 / 4096;
+			for(i = pixel_x - 5; i <= pixel_x + 5; i++)
+				for(j = pixel_y - 5; j <= pixel_y + 5; j++)
+
+		}
+		//for(ii = 0; ii < 3000; ii++);
+	}
+	printf("End\n");
+	return 0;
+}
+
+void Load_All() {
+	Format_Conv1_W();
+	Format_Conv2_W();
+	Format_Fc1_W();
+	Format_Fc2_W();
+	Format_InputImage();
+}
+
+void Conv1() {
+	int i, j, k;
+	int i2, j2;
+	double tmp_ans;
+	for (i = 0; i < IMAGE_DIM; i++)
+		for (j = 0; j < IMAGE_DIM; j++)
+			for (k = 0; k < CONV1_OUT_DIM; k++) {
+				tmp_ans = 0.0;
+				for (i2 = -CONV_RANGE; i2 <= CONV_RANGE; i2++)
+					for (j2 = -CONV_RANGE; j2 <= CONV_RANGE; j2++)
+						if (i + i2 >= 0 && j + j2 >= 0 && i + i2 < IMAGE_DIM && j + j2 < IMAGE_DIM)
+							tmp_ans += Conv1_W[CONV_MID + i2][CONV_MID + j2][0][k] * Input_Image[i + i2][j + j2];
+				tmp_ans += Conv1_B[k];
+				tmp_ans = RELU(tmp_ans);
+				Conv1_Image[i][j][k] = tmp_ans;
+			}
+}
+
+double max(double x1, double x2, double x3, double x4) {
+	double ans = x1;
+	ans = (x2 > ans) ? x2 : ans;
+	ans = (x3 > ans) ? x3 : ans;
+	ans = (x4 > ans) ? x4 : ans;
+	return ans;
+}
+
+void MaxPool1() {
+	int i, j, k;
+	for (i = 0; i < IMAGE_DIM / 2; i++)
+		for (j = 0; j < IMAGE_DIM / 2; j++)
+			for (k = 0; k < CONV1_OUT_DIM; k++)
+				Pool1_Image[i][j][k] = max(Conv1_Image[i * 2][j * 2][k],
+					Conv1_Image[i * 2 + 1][j * 2][k],
+					Conv1_Image[i * 2][j * 2 + 1][k],
+					Conv1_Image[i * 2 + 1][j * 2 + 1][k]);
+}
+
+void Conv2() {
+	int i, j, k;
+	int i2, j2, k2;
+	double tmp_ans;
+	for (i = 0; i < IMAGE_DIM / 2; i++)
+		for (j = 0; j < IMAGE_DIM / 2; j++)
+			for (k = 0; k < CONV2_OUT_DIM; k++) {
+				tmp_ans = 0.0;
+				for (i2 = -CONV_RANGE; i2 <= CONV_RANGE; i2++)
+					for (j2 = -CONV_RANGE; j2 <= CONV_RANGE; j2++)
+						for (k2 = -CONV_RANGE; k2 < CONV1_OUT_DIM; k2++)
+							if (i + i2 >= 0 && j + j2 >= 0 && i + i2 < IMAGE_DIM / 2 && j + j2 < IMAGE_DIM / 2)
+								tmp_ans += Conv2_W[CONV_MID + i2][CONV_MID + j2][k2][k] * Pool1_Image[i + i2][j + j2][k2];
+				tmp_ans += Conv2_B[k];
+				tmp_ans = RELU(tmp_ans);
+				Conv2_Image[i][j][k] = tmp_ans;
+			}
+}
+
+void MaxPool2() {
+	int i, j, k;
+	for (i = 0; i < IMAGE_DIM / 4; i++)
+		for (j = 0; j < IMAGE_DIM / 4; j++)
+			for (k = 0; k < CONV2_OUT_DIM; k++)
+				Pool2_Image[i][j][k] = max(Conv2_Image[i * 2][j * 2][k],
+					Conv2_Image[i * 2 + 1][j * 2][k],
+					Conv2_Image[i * 2][j * 2 + 1][k],
+					Conv2_Image[i * 2 + 1][j * 2 + 1][k]);
+}
+
+void Flatten() {
+	int i, j, k;
+	for (i = 0; i < IMAGE_DIM / 4; i++)
+		for (j = 0; j < IMAGE_DIM / 4; j++)
+			for (k = 0; k < CONV2_OUT_DIM; k++)
+				Flat_Image[i*(IMAGE_DIM / 4)*CONV2_OUT_DIM + j * CONV2_OUT_DIM + k] = Pool2_Image[i][j][k];
+}
+
+void Fc1() {
+	int i, j;
+	double tmp_ans;
+	for (i = 0; i < FC1_OUT_DIM; i++) {
+		tmp_ans = 0.0;
+		for (j = 0; j < (IMAGE_DIM / 4)*(IMAGE_DIM / 4)*CONV2_OUT_DIM; j++)
+			tmp_ans += Flat_Image[j] * Fc1_W[j][i];
+		tmp_ans += Fc1_B[i];
+		tmp_ans = RELU(tmp_ans);
+		FC1_Image[i] = tmp_ans;
+	}
+}
+
+void Fc2() {
+	int i, j;
+	double tmp_ans;
+	for (i = 0; i < FC2_OUT_DIM; i++) {
+		tmp_ans = 0.0;
+		for (j = 0; j < FC1_OUT_DIM; j++)
+			tmp_ans += FC1_Image[j] * Fc2_W[j][i];
+		tmp_ans += Fc2_B[i];
+		FC2_Image[i] = tmp_ans;
+	}
+}
+
+void Get_Answer() {
+	double max = FC2_Image[0];
+	int max_point = 0;
+	int i;
+	for (i = 1; i < FC2_OUT_DIM; i++)
+		if (FC2_Image[i] > max) {
+			max = FC2_Image[i];
+			max_point = i;
+		}
+	ans = max_point;
+}

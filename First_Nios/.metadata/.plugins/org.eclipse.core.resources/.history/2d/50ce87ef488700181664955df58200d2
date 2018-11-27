@@ -1,0 +1,29 @@
+#include "Image_Buffer.h"
+
+void Image_Buffer_Clear(unsigned char grey) {
+	int i, j;
+	for(i = 0; i < SCREEN_WITDH; i++)
+		for(j = 0; j < SCREEN_HEIGHT; j++)
+			I_buffer[i][j] = grey;
+}
+
+void Image_Buffer_Addmask(int x, int y, unsigned char mask[DOT_DIAMETER][DOT_DIAMETER]) {
+	int i, j;
+	for(i = -DOT_RADIUS; i <= DOT_RADIUS; i++)
+		for(j = -DOT_RADIUS; j <= DOT_RADIUS; j++)
+			if(i + x >= 0 && j + y >= 0 && i + x < SCREEN_WITDH && j + y < SCREEN_HEIGHT)
+					if(mask[MASK_MID + i][MASK_MID + j] < I_buffer[i + x][j + y]) // The original color will be overlapped by a deeper color
+						I_buffer[i + x][j + y] = mask[MASK_MID + i][MASK_MID + j];
+}
+
+void Write_Pixel_Color(unsigned int *Base_Addr, int x, int y, unsigned int grey) {
+	unsigned int offset = (y * 800 + x);
+	unsigned int data;
+	data = (offset << 12) + grey;
+	*(Base_Addr) = data;
+}
+
+void Draw_Pixel_XYCOORD(int x, int y, unsigned char grey) {
+	int i = 800 - (y * 800 / 4096);
+	int j = 480 - (x * 480 / 4096);
+}

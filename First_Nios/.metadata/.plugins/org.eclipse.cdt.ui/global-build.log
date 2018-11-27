@@ -1,0 +1,301 @@
+11:35:36 **** Incremental Build of configuration Nios II for project CNN_MNIST ****
+make all 
+Info: Building ../CNN_MNIST_bsp/
+D:/altera/15.0/nios2eds/bin/gnu/H-x86_64-mingw32/bin/make --no-print-directory -C ../CNN_MNIST_bsp/
+[BSP build complete]
+Info: Compiling hello_world.c to obj/default/hello_world.o
+nios2-elf-gcc -xc -MP -MMD -c -I../CNN_MNIST_bsp//HAL/inc -I../CNN_MNIST_bsp/ -I../CNN_MNIST_bsp//drivers/inc  -pipe -D__hal__ -DALT_NO_C_PLUS_PLUS -DALT_NO_INSTRUCTION_EMULATION -DALT_USE_SMALL_DRIVERS -DSMALL_C_LIB -DALT_SINGLE_THREADED    -O0 -g -Wall   -mno-hw-div -mhw-mul -mno-hw-mulx  -o obj/default/hello_world.o hello_world.c
+In file included from LCD1602_Qsys.h:11:0,
+                 from hello_world.c:2:
+../CNN_MNIST_bsp/system.h:251:24: warning: initialization makes pointer from integer without a cast
+ #define USER_SEG8_BASE 0x10001100
+                        ^
+hello_world.c:6:28: note: in expansion of macro 'USER_SEG8_BASE'
+ unsigned int *pUser_SEG8 = USER_SEG8_BASE;
+                            ^
+../CNN_MNIST_bsp/system.h:237:27: warning: initialization makes pointer from integer without a cast
+ #define USER_LTM_ADC_BASE 0x100010c0
+                           ^
+hello_world.c:7:31: note: in expansion of macro 'USER_LTM_ADC_BASE'
+ unsigned int *pUser_LTM_ADC = USER_LTM_ADC_BASE;
+                               ^
+../CNN_MNIST_bsp/system.h:265:27: warning: initialization makes pointer from integer without a cast
+ #define USER_SRAM_BW_BASE 0x10001080
+                           ^
+hello_world.c:8:31: note: in expansion of macro 'USER_SRAM_BW_BASE'
+ unsigned int *pUser_LTM_Buf = USER_SRAM_BW_BASE;
+                               ^
+hello_world.c: In function 'Reset_Screen':
+hello_world.c:25:2: warning: pointer targets in passing argument 3 of 'LCD_Disp' differ in signedness [-Wpointer-sign]
+  LCD_Disp(1, 0, "Please draw", 11);
+  ^
+In file included from hello_world.c:2:0:
+LCD1602_Qsys.h:22:6: note: expected 'unsigned char *' but argument is of type 'char *'
+ void LCD_Disp(unsigned char Row, unsigned char position , unsigned char *pData , unsigned char len);
+      ^
+hello_world.c:26:2: warning: pointer targets in passing argument 3 of 'LCD_Disp' differ in signedness [-Wpointer-sign]
+  LCD_Disp(2, 0, "               ", 15);
+  ^
+In file included from hello_world.c:2:0:
+LCD1602_Qsys.h:22:6: note: expected 'unsigned char *' but argument is of type 'char *'
+ void LCD_Disp(unsigned char Row, unsigned char position , unsigned char *pData , unsigned char len);
+      ^
+hello_world.c: In function 'Recognition':
+hello_world.c:37:2: warning: pointer targets in passing argument 3 of 'LCD_Disp' differ in signedness [-Wpointer-sign]
+  LCD_Disp(1, 0, "Calculating...", 14);
+  ^
+In file included from hello_world.c:2:0:
+LCD1602_Qsys.h:22:6: note: expected 'unsigned char *' but argument is of type 'char *'
+ void LCD_Disp(unsigned char Row, unsigned char position , unsigned char *pData , unsigned char len);
+      ^
+hello_world.c:38:2: warning: pointer targets in passing argument 3 of 'LCD_Disp' differ in signedness [-Wpointer-sign]
+  LCD_Disp(2, 0, "               ", 15);
+  ^
+In file included from hello_world.c:2:0:
+LCD1602_Qsys.h:22:6: note: expected 'unsigned char *' but argument is of type 'char *'
+ void LCD_Disp(unsigned char Row, unsigned char position , unsigned char *pData , unsigned char len);
+      ^
+hello_world.c:77:2: warning: pointer targets in passing argument 3 of 'LCD_Disp' differ in signedness [-Wpointer-sign]
+  LCD_Disp(1, 0, str_ans, 9);
+  ^
+In file included from hello_world.c:2:0:
+LCD1602_Qsys.h:22:6: note: expected 'unsigned char *' but argument is of type 'char *'
+ void LCD_Disp(unsigned char Row, unsigned char position , unsigned char *pData , unsigned char len);
+      ^
+hello_world.c:92:2: warning: pointer targets in passing argument 3 of 'LCD_Disp' differ in signedness [-Wpointer-sign]
+  LCD_Disp(2, 0, str_pro, 13);
+  ^
+In file included from hello_world.c:2:0:
+LCD1602_Qsys.h:22:6: note: expected 'unsigned char *' but argument is of type 'char *'
+ void LCD_Disp(unsigned char Row, unsigned char position , unsigned char *pData , unsigned char len);
+      ^
+Info: Linking CNN_MNIST.elf
+nios2-elf-g++  -T'../CNN_MNIST_bsp//linker.x' -msys-crt0='../CNN_MNIST_bsp//obj/HAL/src/crt0.o' -msys-lib=hal_bsp -L../CNN_MNIST_bsp/  -msmallc  -Wl,-Map=CNN_MNIST.map   -O0 -g -Wall   -mno-hw-div -mhw-mul -mno-hw-mulx  -o CNN_MNIST.elf obj/default/LCD1602_Qsys.o obj/default/hello_world.o -lm -msys-lib=m
+nios2-elf-insert CNN_MNIST.elf --thread_model hal --cpu_name nios2 --qsys true --simulation_enabled false --id 1 --sidp 0x100011d0 --timestamp 1531484321 --stderr_dev jtag_uart --stdin_dev jtag_uart --stdout_dev jtag_uart --sopc_system_name kernel --quartus_project_dir "D:/First_Nios" --jdi D:/First_Nios/software/CNN_MNIST_bsp/../../First_Nios.jdi --sopcinfo D:/First_Nios/software/CNN_MNIST_bsp/../../kernel.sopcinfo
+Info: (CNN_MNIST.elf) 833 KBytes program size (code + initialized data).
+Info:                 130176 KBytes free for stack + heap.
+Info: Creating CNN_MNIST.objdump
+nios2-elf-objdump --disassemble --syms --all-header --source CNN_MNIST.elf >CNN_MNIST.objdump
+[CNN_MNIST build complete]
+11:35:41 **** Incremental Build of configuration Nios II for project CNN_MNIST ****
+make all 
+Info: Building ../CNN_MNIST_bsp/
+D:/altera/15.0/nios2eds/bin/gnu/H-x86_64-mingw32/bin/make --no-print-directory -C ../CNN_MNIST_bsp/
+[BSP build complete]
+[CNN_MNIST build complete]
+14:17:45 **** Incremental Build of configuration Nios II for project CNN_MNIST ****
+make all 
+Info: Building ../CNN_MNIST_bsp/
+D:/altera/15.0/nios2eds/bin/gnu/H-x86_64-mingw32/bin/make --no-print-directory -C ../CNN_MNIST_bsp/
+[BSP build complete]
+[CNN_MNIST build complete]
+14:24:02 **** Incremental Build of configuration Nios II for project CNN_MNIST ****
+make all 
+Info: Building ../CNN_MNIST_bsp/
+D:/altera/15.0/nios2eds/bin/gnu/H-x86_64-mingw32/bin/make --no-print-directory -C ../CNN_MNIST_bsp/
+[BSP build complete]
+[CNN_MNIST build complete]
+11:40:10 **** Incremental Build of configuration Nios II for project CNN_MNIST ****
+make all 
+Info: Building ../CNN_MNIST_bsp/
+D:/altera/15.0/nios2eds/bin/gnu/H-x86_64-mingw32/bin/make --no-print-directory -C ../CNN_MNIST_bsp/
+[BSP build complete]
+[CNN_MNIST build complete]
+11:40:27 **** Incremental Build of configuration Nios II for project CNN_MNIST ****
+make all 
+Info: Building ../CNN_MNIST_bsp/
+D:/altera/15.0/nios2eds/bin/gnu/H-x86_64-mingw32/bin/make --no-print-directory -C ../CNN_MNIST_bsp/
+[BSP build complete]
+[CNN_MNIST build complete]
+13:28:19 **** Incremental Build of configuration Nios II for project CNN_MNIST ****
+make all 
+Info: Building ../CNN_MNIST_bsp/
+D:/altera/15.0/nios2eds/bin/gnu/H-x86_64-mingw32/bin/make --no-print-directory -C ../CNN_MNIST_bsp/
+[BSP build complete]
+[CNN_MNIST build complete]
+13:34:00 **** Incremental Build of configuration Nios II for project CNN_MNIST ****
+make all 
+Info: Building ../CNN_MNIST_bsp/
+D:/altera/15.0/nios2eds/bin/gnu/H-x86_64-mingw32/bin/make --no-print-directory -C ../CNN_MNIST_bsp/
+[BSP build complete]
+Info: Compiling hello_world.c to obj/default/hello_world.o
+nios2-elf-gcc -xc -MP -MMD -c -I../CNN_MNIST_bsp//HAL/inc -I../CNN_MNIST_bsp/ -I../CNN_MNIST_bsp//drivers/inc  -pipe -D__hal__ -DALT_NO_C_PLUS_PLUS -DALT_NO_INSTRUCTION_EMULATION -DALT_USE_SMALL_DRIVERS -DSMALL_C_LIB -DALT_SINGLE_THREADED    -O0 -g -Wall   -mno-hw-div -mhw-mul -mno-hw-mulx  -o obj/default/hello_world.o hello_world.c
+In file included from LCD1602_Qsys.h:11:0,
+                 from hello_world.c:2:
+../CNN_MNIST_bsp/system.h:251:24: warning: initialization makes pointer from integer without a cast
+ #define USER_SEG8_BASE 0x10001100
+                        ^
+hello_world.c:6:28: note: in expansion of macro 'USER_SEG8_BASE'
+ unsigned int *pUser_SEG8 = USER_SEG8_BASE;
+                            ^
+../CNN_MNIST_bsp/system.h:237:27: warning: initialization makes pointer from integer without a cast
+ #define USER_LTM_ADC_BASE 0x100010c0
+                           ^
+hello_world.c:7:31: note: in expansion of macro 'USER_LTM_ADC_BASE'
+ unsigned int *pUser_LTM_ADC = USER_LTM_ADC_BASE;
+                               ^
+../CNN_MNIST_bsp/system.h:265:27: warning: initialization makes pointer from integer without a cast
+ #define USER_SRAM_BW_BASE 0x10001080
+                           ^
+hello_world.c:8:31: note: in expansion of macro 'USER_SRAM_BW_BASE'
+ unsigned int *pUser_LTM_Buf = USER_SRAM_BW_BASE;
+                               ^
+hello_world.c: In function 'Reset_Screen':
+hello_world.c:25:2: warning: pointer targets in passing argument 3 of 'LCD_Disp' differ in signedness [-Wpointer-sign]
+  LCD_Disp(1, 0, "Please draw", 11);
+  ^
+In file included from hello_world.c:2:0:
+LCD1602_Qsys.h:22:6: note: expected 'unsigned char *' but argument is of type 'char *'
+ void LCD_Disp(unsigned char Row, unsigned char position , unsigned char *pData , unsigned char len);
+      ^
+hello_world.c:26:2: warning: pointer targets in passing argument 3 of 'LCD_Disp' differ in signedness [-Wpointer-sign]
+  LCD_Disp(2, 0, "               ", 15);
+  ^
+In file included from hello_world.c:2:0:
+LCD1602_Qsys.h:22:6: note: expected 'unsigned char *' but argument is of type 'char *'
+ void LCD_Disp(unsigned char Row, unsigned char position , unsigned char *pData , unsigned char len);
+      ^
+hello_world.c: In function 'Recognition':
+hello_world.c:37:2: warning: pointer targets in passing argument 3 of 'LCD_Disp' differ in signedness [-Wpointer-sign]
+  LCD_Disp(1, 0, "Calculating...", 14);
+  ^
+In file included from hello_world.c:2:0:
+LCD1602_Qsys.h:22:6: note: expected 'unsigned char *' but argument is of type 'char *'
+ void LCD_Disp(unsigned char Row, unsigned char position , unsigned char *pData , unsigned char len);
+      ^
+hello_world.c:38:2: warning: pointer targets in passing argument 3 of 'LCD_Disp' differ in signedness [-Wpointer-sign]
+  LCD_Disp(2, 0, "               ", 15);
+  ^
+In file included from hello_world.c:2:0:
+LCD1602_Qsys.h:22:6: note: expected 'unsigned char *' but argument is of type 'char *'
+ void LCD_Disp(unsigned char Row, unsigned char position , unsigned char *pData , unsigned char len);
+      ^
+hello_world.c:77:2: warning: pointer targets in passing argument 3 of 'LCD_Disp' differ in signedness [-Wpointer-sign]
+  LCD_Disp(1, 0, str_ans, 9);
+  ^
+In file included from hello_world.c:2:0:
+LCD1602_Qsys.h:22:6: note: expected 'unsigned char *' but argument is of type 'char *'
+ void LCD_Disp(unsigned char Row, unsigned char position , unsigned char *pData , unsigned char len);
+      ^
+hello_world.c:92:2: warning: pointer targets in passing argument 3 of 'LCD_Disp' differ in signedness [-Wpointer-sign]
+  LCD_Disp(2, 0, str_pro, 13);
+  ^
+In file included from hello_world.c:2:0:
+LCD1602_Qsys.h:22:6: note: expected 'unsigned char *' but argument is of type 'char *'
+ void LCD_Disp(unsigned char Row, unsigned char position , unsigned char *pData , unsigned char len);
+      ^
+hello_world.c:96:3: warning: pointer targets in passing argument 3 of 'LCD_Disp' differ in signedness [-Wpointer-sign]
+   LCD_Disp(1, 0, "Do not xjb Draw", 15);
+   ^
+In file included from hello_world.c:2:0:
+LCD1602_Qsys.h:22:6: note: expected 'unsigned char *' but argument is of type 'char *'
+ void LCD_Disp(unsigned char Row, unsigned char position , unsigned char *pData , unsigned char len);
+      ^
+hello_world.c:97:3: warning: pointer targets in passing argument 3 of 'LCD_Disp' differ in signedness [-Wpointer-sign]
+   LCD_Disp(2, 0, "Duo Lao A", 9);
+   ^
+In file included from hello_world.c:2:0:
+LCD1602_Qsys.h:22:6: note: expected 'unsigned char *' but argument is of type 'char *'
+ void LCD_Disp(unsigned char Row, unsigned char position , unsigned char *pData , unsigned char len);
+      ^
+Info: Linking CNN_MNIST.elf
+nios2-elf-g++  -T'../CNN_MNIST_bsp//linker.x' -msys-crt0='../CNN_MNIST_bsp//obj/HAL/src/crt0.o' -msys-lib=hal_bsp -L../CNN_MNIST_bsp/  -msmallc  -Wl,-Map=CNN_MNIST.map   -O0 -g -Wall   -mno-hw-div -mhw-mul -mno-hw-mulx  -o CNN_MNIST.elf obj/default/LCD1602_Qsys.o obj/default/hello_world.o -lm -msys-lib=m
+nios2-elf-insert CNN_MNIST.elf --thread_model hal --cpu_name nios2 --qsys true --simulation_enabled false --id 1 --sidp 0x100011d0 --timestamp 1531484321 --stderr_dev jtag_uart --stdin_dev jtag_uart --stdout_dev jtag_uart --sopc_system_name kernel --quartus_project_dir "D:/First_Nios" --jdi D:/First_Nios/software/CNN_MNIST_bsp/../../First_Nios.jdi --sopcinfo D:/First_Nios/software/CNN_MNIST_bsp/../../kernel.sopcinfo
+Info: (CNN_MNIST.elf) 833 KBytes program size (code + initialized data).
+Info:                 130175 KBytes free for stack + heap.
+Info: Creating CNN_MNIST.objdump
+nios2-elf-objdump --disassemble --syms --all-header --source CNN_MNIST.elf >CNN_MNIST.objdump
+[CNN_MNIST build complete]
+13:35:04 **** Incremental Build of configuration Nios II for project CNN_MNIST ****
+make all 
+Info: Building ../CNN_MNIST_bsp/
+D:/altera/15.0/nios2eds/bin/gnu/H-x86_64-mingw32/bin/make --no-print-directory -C ../CNN_MNIST_bsp/
+[BSP build complete]
+Info: Compiling hello_world.c to obj/default/hello_world.o
+nios2-elf-gcc -xc -MP -MMD -c -I../CNN_MNIST_bsp//HAL/inc -I../CNN_MNIST_bsp/ -I../CNN_MNIST_bsp//drivers/inc  -pipe -D__hal__ -DALT_NO_C_PLUS_PLUS -DALT_NO_INSTRUCTION_EMULATION -DALT_USE_SMALL_DRIVERS -DSMALL_C_LIB -DALT_SINGLE_THREADED    -O0 -g -Wall   -mno-hw-div -mhw-mul -mno-hw-mulx  -o obj/default/hello_world.o hello_world.c
+In file included from LCD1602_Qsys.h:11:0,
+                 from hello_world.c:2:
+../CNN_MNIST_bsp/system.h:251:24: warning: initialization makes pointer from integer without a cast
+ #define USER_SEG8_BASE 0x10001100
+                        ^
+hello_world.c:6:28: note: in expansion of macro 'USER_SEG8_BASE'
+ unsigned int *pUser_SEG8 = USER_SEG8_BASE;
+                            ^
+../CNN_MNIST_bsp/system.h:237:27: warning: initialization makes pointer from integer without a cast
+ #define USER_LTM_ADC_BASE 0x100010c0
+                           ^
+hello_world.c:7:31: note: in expansion of macro 'USER_LTM_ADC_BASE'
+ unsigned int *pUser_LTM_ADC = USER_LTM_ADC_BASE;
+                               ^
+../CNN_MNIST_bsp/system.h:265:27: warning: initialization makes pointer from integer without a cast
+ #define USER_SRAM_BW_BASE 0x10001080
+                           ^
+hello_world.c:8:31: note: in expansion of macro 'USER_SRAM_BW_BASE'
+ unsigned int *pUser_LTM_Buf = USER_SRAM_BW_BASE;
+                               ^
+hello_world.c: In function 'Reset_Screen':
+hello_world.c:25:2: warning: pointer targets in passing argument 3 of 'LCD_Disp' differ in signedness [-Wpointer-sign]
+  LCD_Disp(1, 0, "Please draw", 11);
+  ^
+In file included from hello_world.c:2:0:
+LCD1602_Qsys.h:22:6: note: expected 'unsigned char *' but argument is of type 'char *'
+ void LCD_Disp(unsigned char Row, unsigned char position , unsigned char *pData , unsigned char len);
+      ^
+hello_world.c:26:2: warning: pointer targets in passing argument 3 of 'LCD_Disp' differ in signedness [-Wpointer-sign]
+  LCD_Disp(2, 0, "               ", 15);
+  ^
+In file included from hello_world.c:2:0:
+LCD1602_Qsys.h:22:6: note: expected 'unsigned char *' but argument is of type 'char *'
+ void LCD_Disp(unsigned char Row, unsigned char position , unsigned char *pData , unsigned char len);
+      ^
+hello_world.c: In function 'Recognition':
+hello_world.c:37:2: warning: pointer targets in passing argument 3 of 'LCD_Disp' differ in signedness [-Wpointer-sign]
+  LCD_Disp(1, 0, "Calculating...", 14);
+  ^
+In file included from hello_world.c:2:0:
+LCD1602_Qsys.h:22:6: note: expected 'unsigned char *' but argument is of type 'char *'
+ void LCD_Disp(unsigned char Row, unsigned char position , unsigned char *pData , unsigned char len);
+      ^
+hello_world.c:38:2: warning: pointer targets in passing argument 3 of 'LCD_Disp' differ in signedness [-Wpointer-sign]
+  LCD_Disp(2, 0, "               ", 15);
+  ^
+In file included from hello_world.c:2:0:
+LCD1602_Qsys.h:22:6: note: expected 'unsigned char *' but argument is of type 'char *'
+ void LCD_Disp(unsigned char Row, unsigned char position , unsigned char *pData , unsigned char len);
+      ^
+hello_world.c:77:2: warning: pointer targets in passing argument 3 of 'LCD_Disp' differ in signedness [-Wpointer-sign]
+  LCD_Disp(1, 0, str_ans, 9);
+  ^
+In file included from hello_world.c:2:0:
+LCD1602_Qsys.h:22:6: note: expected 'unsigned char *' but argument is of type 'char *'
+ void LCD_Disp(unsigned char Row, unsigned char position , unsigned char *pData , unsigned char len);
+      ^
+hello_world.c:92:2: warning: pointer targets in passing argument 3 of 'LCD_Disp' differ in signedness [-Wpointer-sign]
+  LCD_Disp(2, 0, str_pro, 13);
+  ^
+In file included from hello_world.c:2:0:
+LCD1602_Qsys.h:22:6: note: expected 'unsigned char *' but argument is of type 'char *'
+ void LCD_Disp(unsigned char Row, unsigned char position , unsigned char *pData , unsigned char len);
+      ^
+hello_world.c:96:3: warning: pointer targets in passing argument 3 of 'LCD_Disp' differ in signedness [-Wpointer-sign]
+   LCD_Disp(1, 0, "Do not xjb Draw", 15);
+   ^
+In file included from hello_world.c:2:0:
+LCD1602_Qsys.h:22:6: note: expected 'unsigned char *' but argument is of type 'char *'
+ void LCD_Disp(unsigned char Row, unsigned char position , unsigned char *pData , unsigned char len);
+      ^
+hello_world.c:97:3: warning: pointer targets in passing argument 3 of 'LCD_Disp' differ in signedness [-Wpointer-sign]
+   LCD_Disp(2, 0, "Duo Lao A      ", 15);
+   ^
+In file included from hello_world.c:2:0:
+LCD1602_Qsys.h:22:6: note: expected 'unsigned char *' but argument is of type 'char *'
+ void LCD_Disp(unsigned char Row, unsigned char position , unsigned char *pData , unsigned char len);
+      ^
+Info: Linking CNN_MNIST.elf
+nios2-elf-g++  -T'../CNN_MNIST_bsp//linker.x' -msys-crt0='../CNN_MNIST_bsp//obj/HAL/src/crt0.o' -msys-lib=hal_bsp -L../CNN_MNIST_bsp/  -msmallc  -Wl,-Map=CNN_MNIST.map   -O0 -g -Wall   -mno-hw-div -mhw-mul -mno-hw-mulx  -o CNN_MNIST.elf obj/default/LCD1602_Qsys.o obj/default/hello_world.o -lm -msys-lib=m
+nios2-elf-insert CNN_MNIST.elf --thread_model hal --cpu_name nios2 --qsys true --simulation_enabled false --id 1 --sidp 0x100011d0 --timestamp 1531484321 --stderr_dev jtag_uart --stdin_dev jtag_uart --stdout_dev jtag_uart --sopc_system_name kernel --quartus_project_dir "D:/First_Nios" --jdi D:/First_Nios/software/CNN_MNIST_bsp/../../First_Nios.jdi --sopcinfo D:/First_Nios/software/CNN_MNIST_bsp/../../kernel.sopcinfo
+Info: (CNN_MNIST.elf) 833 KBytes program size (code + initialized data).
+Info:                 130175 KBytes free for stack + heap.
+Info: Creating CNN_MNIST.objdump
+nios2-elf-objdump --disassemble --syms --all-header --source CNN_MNIST.elf >CNN_MNIST.objdump
+[CNN_MNIST build complete]

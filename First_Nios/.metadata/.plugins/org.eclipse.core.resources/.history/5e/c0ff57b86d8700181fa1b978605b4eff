@@ -1,0 +1,135 @@
+#include <stdio.h>
+#include "LCD1602_Qsys.h"
+#include "system.h"
+#include "CNN_recognition.h"
+
+//#include "system.h"
+unsigned int *pUser_SEG8 = USER_SEG8_BASE;
+unsigned int *pUser_LTM_ADC = USER_LTM_ADC_BASE;
+unsigned int *pUser_LTM_Buf = USER_SRAM_BW_BASE;
+char str_ans[] = "Result: 0";
+unsigned char Screen_Buffer[800][480];
+unsigned char Large_Digit[480][480];
+double sum_value[28][28], sum_n[28][28];
+unsigned char recognize_flag;
+
+void Reset_Screen() {
+	int i, j;
+	for(i = 0; i < 800*480; i++)
+		*(pUser_LTM_Buf) = (i << 12) + 255;
+	for(j = 0; j < 480; j++) {
+		*(pUser_LTM_Buf) = ((j * 800 + 159) << 12) + 0;
+		*(pUser_LTM_Buf) = ((j * 800 + 640) << 12) + 0;
+	}
+	*(pUser_SEG8) = 0xffffffff;
+	LCD_Disp(1, 0, "Please draw", 11);
+	for(i = 0; i < 800; i++)
+		for(j = 0; j < 480; j++)
+			Screen_Buffer[i][j] = 255;
+	/*for(j = 0; j < 480; j++) {
+		Screen_Buffer[159][j]= 0;
+		Screen_Buffer[641][j]= 0;
+	}*/
+	recognize_flag = 0;
+}
+
+void Recognition() {
+	if(recognize_flag == 1)
+		return;
+	printf("Recognize!\n");
+	int i, j, tmp_i, tmp_j;
+	/*for(j = 0; j < 480; j++) {
+		Screen_Buffer[159][j]= 255;
+		Screen_Buffer[641][j]= 255;
+	}*/
+	for(i = 160; i < 640; i++)
+		for(j = 0; j < 480; j++)
+			Large_Digit[480 - j][i - 160] = Screen_Buffer[i][j];
+	for(i = 0; i < 28; i++)
+		for(j = 0; j < 28; j++) {
+			sum_value[i][j] = 0.0;
+			sum_n[i][j] = 0;
+		}
+	for(i = 0; i < 480; i++)
+		for(j = 0; j < 480; j++) {
+			tmp_i = (int)((double)i * 28.0 / 480.0);
+			tmp_j = (int)((double)j * 28.0 / 480.0);
+			sum_value[tmp_i][tmp_j] += Large_Digit[i][j];
+			sum_n[tmp_i][tmp_j] += 1;
+		}
+	for(i = 0; i < 28; i++)
+		for(j = 0; j < 28; j++)
+			Input_Image[i][j] = 1.0 - sum_value[i][j] / (double)sum_n[i][j] / 255.0;
+	for(j = 0; j < 28; j++)
+		Input_Image[0][j] = 0.0;
+	for(i = 0; i < 28; i++) {
+		for(j = 0; j < 28; j++)
+			printf("%5d ", (int)(Input_Image[i][j] * 255.0));
+		printf("\n");
+	}
+	CNN_MNIST_recognition();
+	printf("Answer = %d\n", ans);
+	*(pUser_SEG8) = 0xfffffff0 + ans;
+	str_ans[8] = 48 + ans;
+	LCD_Disp(1, 0, str_ans, 9);
+	recognize_flag = 1;
+}
+
+int main() {
+	Load_All();
+	printf("Program Starts.\n");
+	//CNN_MNIST_recognition();
+
+	/*printf("Answer = %d\n", ans);
+	*(pUser_SEG8) = 0xfffffff0 + ans;
+	str_ans[8] = 48 + ans;
+	LCD_Disp(1, 0, str_ans, 9);*/
+
+	int ii;
+	unsigned int new_coord, x_coord, y_coord, coord_result, last_x, last_y, pixel_i, pixel_j;
+	int i, j;
+
+	Reset_Screen();
+
+	last_x = (coord_result & 0x0fff0000) >> 16;
+	last_y = coord_result & 0x00000fff;
+	unsigned char tmp;
+	while(1) {
+		*(pUser_LTM_ADC) = 1;
+		coord_result = *(pUser_LTM_ADC);
+		x_coord = (coord_result & 0x0fff0000) >> 16;
+		y_coord = coord_result & 0x00000fff;
+		if(x_coord != last_x || y_coord != last_y) {
+			//printf("position = (%d, %d)\n", x_coord, y_coord);
+			last_x = x_coord;
+			last_y = y_coord;
+			if(y_coord < 820) {
+				Recognition();
+				//break;
+			}
+			else {
+				if(y_coord >= 3276)
+					Reset_Screen();
+				else {
+					if(recognize_flag == 0) {
+						pixel_i = 800 - (y_coord * 800 / 4096);
+						pixel_j = 480 - (x_coord * 480 / 4096);
+						for(i = pixel_i - 20; i <= pixel_i + 20; i++)
+							for(j = pixel_j - 20; j <= pixel_j + 20; j++)
+								if(i >= 160 && j >= 0 && i < 640 && j < 480) {
+									tmp = Image_Mask[(i - pixel_i + 20) + (j - pixel_j + 20)*41];
+									if(Screen_Buffer[i][j] > tmp) {
+										Screen_Buffer[i][j] = tmp;
+										*(pUser_LTM_Buf) = ((i + j*800) << 12) + tmp;
+									}
+								}
+					}
+				}
+			}
+		}
+	}
+	printf("End\n");
+	return 0;
+}
+
+

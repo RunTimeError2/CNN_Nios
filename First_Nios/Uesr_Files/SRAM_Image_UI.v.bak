@@ -1,0 +1,25 @@
+// Using SRAM
+module SRAM_Image_UI(
+		//---------------------- Avalon -----------------------
+		csi_clk,                //100MHz Clock
+		csi_reset_n,
+		avs_chipselect,
+		avs_address,
+		avs_read,
+		avs_readdata,
+		avs_write,
+		avs_writedata,
+		//---------------------- User Interface --------------------
+		
+);
+
+// Avalon
+input 						csi_clk;
+input 						csi_reset_n;
+input 						avs_chipselect;
+input 		[3:0] 		avs_address;
+input 						avs_read;
+output reg  [31:0] 		avs_readdata;
+input 						avs_write;
+input 		[31:0] 		avs_writedata;
+// User Interface

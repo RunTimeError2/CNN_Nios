@@ -1,0 +1,25 @@
+#include "Image_Buffer.h"
+
+void Image_Buffer_Clear(unsigned char R, unsigned char G, unsigned char B) {
+	int i, j;
+	for(i = 0; i < SCREEN_WITDH; i++)
+		for(j = 0; j < SCREEN_HEIGHT; j++) {
+			I_buffer[i][j][0] = R;
+			I_buffer[i][j][1] = G;
+			I_buffer[i][j][2] = B;
+		}
+}
+
+void Image_Buffer_Adddot(int x, int y, unsigned char mask[DOT_DIAMETER][DOT_DIAMETER][3]) {
+	int i, j, k;
+	for(i = -DOT_RADIUS; i <= DOT_RADIUS; i++)
+		for(j = -DOT_RADIUS; j <= DOT_RADIUS; j++)
+			if(i + x >= 0 && j + y >= 0 && i + x < SCREEN_WITDH && j + y < SCREEN_HEIGHT)
+				for(k = 0; k < 3; k++)
+					if(mask[MASK_MID + i][MASK_MID + j][k] < I_buffer[i + x][j + k][k]) // The original color will be overlapped by a deeper color
+						I_buffer[i + x][j + k][k] = mask[MASK_MID + i][MASK_MID + j][k];
+}
+
+void Write_Pixel_Color(unsigned int *Base_Addr, int x, int y) {
+	
+}

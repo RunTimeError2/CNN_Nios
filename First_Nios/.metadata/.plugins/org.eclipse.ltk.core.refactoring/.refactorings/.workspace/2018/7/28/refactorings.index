@@ -1,0 +1,7 @@
+1531381279625	Delete resource 'C_Demo'
+1531381280925	Delete resource 'C_Demo_bsp'
+1531383247045	Delete resource 'CNN_MNIST'
+1531383247945	Delete resource 'CNN_MNIST_bsp'
+1531565679273	Delete resource 'CNN_MNIST/CNN_recognition.c'
+1531565745682	Delete resource 'CNN_MNIST/Image_Buffer.c'
+1531565749574	Delete resource 'CNN_MNIST/Image_Buffer.h'

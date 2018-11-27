@@ -1,0 +1,15 @@
+#ifndef IMAGE_BUFFER_H_
+#define IMAGE_BUFFER_H_
+
+unsigned char I_buffer[800][480][3]; // Store R, G, B data of image
+
+#define DOT_DIAMETER 5
+#define MASK_MID 2
+#define DOT_RADIUS 2
+
+// Fill the screen with one specific RGB color
+void Image_Buffer_Clear(unsigned char R, unsigned char G, unsigned char B);
+// Add a dot onto the screen with a specific pattern
+void Image_Buffer_Adddot(int x, int y, unsigned char mask[DOT_DIAMETER][DOT_DIAMETER][3]);
+
+#endif /* IMAGE_BUFFER_H_ */

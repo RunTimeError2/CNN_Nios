@@ -1,0 +1,69 @@
+
+State Machine - |First_Nios|lcd_spi_controller:inst_lcd_spi|msetup_st
+Name msetup_st.0011 msetup_st.0010 msetup_st.0001 msetup_st.0000 msetup_st.0100 
+msetup_st.0000 0 0 0 0 0 
+msetup_st.0001 0 0 1 1 0 
+msetup_st.0010 0 1 0 1 0 
+msetup_st.0011 1 0 0 1 0 
+msetup_st.0100 0 0 0 1 1 
+
+State Machine - |First_Nios|kernel:u0|kernel_sdram_controller:sdram_controller|m_next
+Name m_next.010000000 m_next.000010000 m_next.000001000 m_next.000000001 
+m_next.000000001 0 0 0 0 
+m_next.000001000 0 0 1 1 
+m_next.000010000 0 1 0 1 
+m_next.010000000 1 0 0 1 
+
+State Machine - |First_Nios|kernel:u0|kernel_sdram_controller:sdram_controller|m_state
+Name m_state.100000000 m_state.010000000 m_state.001000000 m_state.000100000 m_state.000010000 m_state.000001000 m_state.000000100 m_state.000000010 m_state.000000001 
+m_state.000000001 0 0 0 0 0 0 0 0 0 
+m_state.000000010 0 0 0 0 0 0 0 1 1 
+m_state.000000100 0 0 0 0 0 0 1 0 1 
+m_state.000001000 0 0 0 0 0 1 0 0 1 
+m_state.000010000 0 0 0 0 1 0 0 0 1 
+m_state.000100000 0 0 0 1 0 0 0 0 1 
+m_state.001000000 0 0 1 0 0 0 0 0 1 
+m_state.010000000 0 1 0 0 0 0 0 0 1 
+m_state.100000000 1 0 0 0 0 0 0 0 1 
+
+State Machine - |First_Nios|kernel:u0|kernel_sdram_controller:sdram_controller|i_next
+Name i_next.111 i_next.101 i_next.010 i_next.000 
+i_next.000 0 0 0 0 
+i_next.010 0 0 1 1 
+i_next.101 0 1 0 1 
+i_next.111 1 0 0 1 
+
+State Machine - |First_Nios|kernel:u0|kernel_sdram_controller:sdram_controller|i_state
+Name i_state.111 i_state.101 i_state.011 i_state.010 i_state.001 i_state.000 
+i_state.000 0 0 0 0 0 0 
+i_state.001 0 0 0 0 1 1 
+i_state.010 0 0 0 1 0 1 
+i_state.011 0 0 1 0 0 1 
+i_state.101 0 1 0 0 0 1 
+i_state.111 1 0 0 0 0 1 
+
+State Machine - |First_Nios|kernel:u0|kernel_nios2:nios2|kernel_nios2_cpu:cpu|kernel_nios2_cpu_nios2_oci:the_kernel_nios2_cpu_nios2_oci|kernel_nios2_cpu_debug_slave_wrapper:the_kernel_nios2_cpu_debug_slave_wrapper|kernel_nios2_cpu_debug_slave_tck:the_kernel_nios2_cpu_debug_slave_tck|DRsize
+Name DRsize.101 DRsize.100 DRsize.011 DRsize.010 DRsize.001 DRsize.000 
+DRsize.000 0 0 0 0 0 0 
+DRsize.001 0 0 0 0 1 1 
+DRsize.010 0 0 0 1 0 1 
+DRsize.011 0 0 1 0 0 1 
+DRsize.100 0 1 0 0 0 1 
+DRsize.101 1 0 0 0 0 1 
+
+State Machine - |First_Nios|kernel:u0|IR_Module:user_ir|state
+Name state.IDLE state.DATAREAD state.GUIDANCE 
+state.IDLE 0 0 0 
+state.GUIDANCE 1 0 1 
+state.DATAREAD 1 1 0 
+
+State Machine - |First_Nios|kernel:u0|LCD_Module:lcd1602_demo|LCD_Driver:Inst_0|ST
+Name ST.111 ST.110 ST.101 ST.100 ST.011 ST.010 ST.001 ST.000 
+ST.000 0 0 0 0 0 0 0 0 
+ST.001 0 0 0 0 0 0 1 1 
+ST.010 0 0 0 0 0 1 0 1 
+ST.011 0 0 0 0 1 0 0 1 
+ST.100 0 0 0 1 0 0 0 1 
+ST.101 0 0 1 0 0 0 0 1 
+ST.110 0 1 0 0 0 0 0 1 
+ST.111 1 0 0 0 0 0 0 1 

@@ -1,0 +1,11 @@
+#include "Image_Buffer.h"
+
+void Image_Buffer_Clear() {
+	int i, j, k;
+	for(i = 0; i < 800; i++)
+		for(j = 0; j < 480; j++)
+			for(k = 0; k < 3; k++)
+				I_buffer[i][j][k] = 0;
+}
+
+void Image_Buffer_Adddot(int x, int y, unsigned char mask[DOT_RADIUS][DOT_RADIUS][3]);

@@ -1,0 +1,142 @@
+/*
+ * CNN_recognition.c
+ *
+ *  Created on: 2018Äê7ÔÂ14ÈÕ
+ *      Author: Song Jiahao
+ */
+
+#include "CNN_recognition.h"
+
+int CNN_MNIST_recognition() {
+	LCD_Clear();
+	Load_All();
+	Conv1();
+	MaxPool1();
+	Conv2();
+	MaxPool2();
+	Flatten();
+	Fc1();
+	Fc2();
+	Get_Answer();
+	return ans;
+}
+
+void Load_All() {
+	Format_Conv1_W();
+	Format_Conv2_W();
+	Format_Fc1_W();
+	Format_Fc2_W();
+	Format_InputImage();
+}
+
+void Conv1() {
+	int i, j, k;
+	int i2, j2;
+	double tmp_ans;
+	for (i = 0; i < IMAGE_DIM; i++)
+		for (j = 0; j < IMAGE_DIM; j++)
+			for (k = 0; k < CONV1_OUT_DIM; k++) {
+				tmp_ans = 0.0;
+				for (i2 = -CONV_RANGE; i2 <= CONV_RANGE; i2++)
+					for (j2 = -CONV_RANGE; j2 <= CONV_RANGE; j2++)
+						if (i + i2 >= 0 && j + j2 >= 0 && i + i2 < IMAGE_DIM && j + j2 < IMAGE_DIM)
+							tmp_ans += Conv1_W[CONV_MID + i2][CONV_MID + j2][0][k] * Input_Image[i + i2][j + j2];
+				tmp_ans += Conv1_B[k];
+				tmp_ans = RELU(tmp_ans);
+				Conv1_Image[i][j][k] = tmp_ans;
+			}
+}
+
+double max(double x1, double x2, double x3, double x4) {
+	double ans = x1;
+	ans = (x2 > ans) ? x2 : ans;
+	ans = (x3 > ans) ? x3 : ans;
+	ans = (x4 > ans) ? x4 : ans;
+	return ans;
+}
+
+void MaxPool1() {
+	int i, j, k;
+	for (i = 0; i < IMAGE_DIM / 2; i++)
+		for (j = 0; j < IMAGE_DIM / 2; j++)
+			for (k = 0; k < CONV1_OUT_DIM; k++)
+				Pool1_Image[i][j][k] = max(Conv1_Image[i * 2][j * 2][k],
+					Conv1_Image[i * 2 + 1][j * 2][k],
+					Conv1_Image[i * 2][j * 2 + 1][k],
+					Conv1_Image[i * 2 + 1][j * 2 + 1][k]);
+}
+
+void Conv2() {
+	int i, j, k;
+	int i2, j2, k2;
+	double tmp_ans;
+	for (i = 0; i < IMAGE_DIM / 2; i++)
+		for (j = 0; j < IMAGE_DIM / 2; j++)
+			for (k = 0; k < CONV2_OUT_DIM; k++) {
+				tmp_ans = 0.0;
+				for (i2 = -CONV_RANGE; i2 <= CONV_RANGE; i2++)
+					for (j2 = -CONV_RANGE; j2 <= CONV_RANGE; j2++)
+						for (k2 = -CONV_RANGE; k2 < CONV1_OUT_DIM; k2++)
+							if (i + i2 >= 0 && j + j2 >= 0 && i + i2 < IMAGE_DIM / 2 && j + j2 < IMAGE_DIM / 2)
+								tmp_ans += Conv2_W[CONV_MID + i2][CONV_MID + j2][k2][k] * Pool1_Image[i + i2][j + j2][k2];
+				tmp_ans += Conv2_B[k];
+				tmp_ans = RELU(tmp_ans);
+				Conv2_Image[i][j][k] = tmp_ans;
+			}
+}
+
+void MaxPool2() {
+	int i, j, k;
+	for (i = 0; i < IMAGE_DIM / 4; i++)
+		for (j = 0; j < IMAGE_DIM / 4; j++)
+			for (k = 0; k < CONV2_OUT_DIM; k++)
+				Pool2_Image[i][j][k] = max(Conv2_Image[i * 2][j * 2][k],
+					Conv2_Image[i * 2 + 1][j * 2][k],
+					Conv2_Image[i * 2][j * 2 + 1][k],
+					Conv2_Image[i * 2 + 1][j * 2 + 1][k]);
+}
+
+void Flatten() {
+	int i, j, k;
+	for (i = 0; i < IMAGE_DIM / 4; i++)
+		for (j = 0; j < IMAGE_DIM / 4; j++)
+			for (k = 0; k < CONV2_OUT_DIM; k++)
+				Flat_Image[i*(IMAGE_DIM / 4)*CONV2_OUT_DIM + j * CONV2_OUT_DIM + k] = Pool2_Image[i][j][k];
+}
+
+void Fc1() {
+	int i, j;
+	double tmp_ans;
+	for (i = 0; i < FC1_OUT_DIM; i++) {
+		tmp_ans = 0.0;
+		for (j = 0; j < (IMAGE_DIM / 4)*(IMAGE_DIM / 4)*CONV2_OUT_DIM; j++)
+			tmp_ans += Flat_Image[j] * Fc1_W[j][i];
+		tmp_ans += Fc1_B[i];
+		tmp_ans = RELU(tmp_ans);
+		FC1_Image[i] = tmp_ans;
+	}
+}
+
+void Fc2() {
+	int i, j;
+	double tmp_ans;
+	for (i = 0; i < FC2_OUT_DIM; i++) {
+		tmp_ans = 0.0;
+		for (j = 0; j < FC1_OUT_DIM; j++)
+			tmp_ans += FC1_Image[j] * Fc2_W[j][i];
+		tmp_ans += Fc2_B[i];
+		FC2_Image[i] = tmp_ans;
+	}
+}
+
+void Get_Answer() {
+	double max = FC2_Image[0];
+	int max_point = 0;
+	int i;
+	for (i = 1; i < FC2_OUT_DIM; i++)
+		if (FC2_Image[i] > max) {
+			max = FC2_Image[i];
+			max_point = i;
+		}
+	ans = max_point;
+}

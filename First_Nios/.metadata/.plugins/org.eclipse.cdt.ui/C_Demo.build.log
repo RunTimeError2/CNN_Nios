@@ -1,0 +1,9 @@
+15:48:20 **** Incremental Build of configuration Nios II for project C_Demo ****
+make all 
+Info: Building ../C_Demo_bsp/
+D:/ALTERA/nios2eds/bin/gnu/H-x86_64-mingw32/bin/make --no-print-directory -C ../C_Demo_bsp/
+[BSP build complete]
+[C_Demo build complete]
+
+15:48:21 Build Finished (took 640ms)
+
