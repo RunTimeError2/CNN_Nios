@@ -2,7 +2,7 @@
 
 - This project provides an example of building an small-scale CNN on FPGA SOPC (Nios applied here).
 
-> Build at summer of 2018
+> Build at summer of 2018 by RunTimeError2
 
 ## Projects
 
